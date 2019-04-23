@@ -48,12 +48,26 @@
   :items [Item]
   })
 
+(s/defschema Ability {
+  :id s/Str
+  :name s/Str
+  (s/optional-key :description) s/Str
+  :level s/Int
+  })
+
+(s/defschema Level {
+  :xp s/Int
+  :level s/Int
+  :max-hp s/Int
+  :abilities [Ability]
+  })
+
 (s/defschema Character {
   :id s/Str
   :name s/Str
   :hp s/Int
-  :max-hp s/Int
   :location Location
+  :level Level
   :equipment Equipment
   :inventory Inventory
 })
