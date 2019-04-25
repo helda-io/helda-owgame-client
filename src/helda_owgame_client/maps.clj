@@ -4,6 +4,21 @@
     )
   )
 
+(def tiles-atom (atom nil))
+
+(defn load-tiles[world-id]
+  (if-let [entities (client/find-entities world-id ["helda.SingleTile"])]
+    (reset! tiles-atom
+      (zipmap
+        (map #(-> % :attrs :comp-id keyword) entities)
+        (map #(:attrs %) entities)
+        )
+      )
+    )
+  )
+
+(defn find-tile-code [id] (some-> @tiles-atom id :tile-code))
+
 (defn render-background-layer [entity]
   (-> entity :attrs :tiles)
   )
