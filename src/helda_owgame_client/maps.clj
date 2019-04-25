@@ -1,6 +1,7 @@
 (ns helda-owgame-client.maps
   (:require
     [clojure.set :refer [map-invert]]
+    [clojure.string :refer [join split]]
     [helda-owgame-client.rest.entities :as client]
     )
   )
@@ -18,7 +19,11 @@
     )
   )
 
-(defn find-tile-code [id] (some-> @tiles-atom id :tile-code))
+(defn find-tile-code [id]
+  (if id
+    (some-> @tiles-atom id :tile-code)
+    )
+  )
 
 (defn find-tile-code-or-default [id default-tile]
   (or
@@ -31,11 +36,13 @@
   (let [
     legend (-> entity :attrs :legend map-invert)
     ]
-    (->> entity
-      :attrs :tiles
-      flatten
-      (map #(get legend %))
-      (map #(find-tile-code-or-default % :green))
+    (as-> entity v
+      (:attrs v)
+      (:tiles v)
+      (join " " v)
+      (split v #" ")
+      (map #(get legend %) v)
+      (map #(find-tile-code-or-default % :green) v)
       )
     )
   )
