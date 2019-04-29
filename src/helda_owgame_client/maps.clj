@@ -8,6 +8,8 @@
 
 (def tiles-atom (atom nil))
 
+(def tiles-world-id "owgame1")
+
 (defn load-tiles[world-id]
   (if-let [entities (client/find-entities world-id ["helda.SingleTile"])]
     (reset! tiles-atom
@@ -33,7 +35,7 @@
   )
 
 (defn find-comp [comp-tag]
-  ;todo
+  (client/find-entities tiles-world-id ["helda.TileSet"] [comp-tag])
   )
 
 (defn render-background-layer [entity]
@@ -55,6 +57,17 @@
 
 (defn init-map []
   (repeat (* map-size map-size) 0)
+  )
+
+(defn merge-tile [tile1 tile2]
+  (if (= tile1 0)
+    tile2
+    tile1
+    )
+  )
+
+(defn merge-map [map1 map2]
+  (map merge-tile map1 map2)
   )
 
 ;first parameter is geo-object
@@ -80,21 +93,14 @@
     )
   )
 
-(defn merge-tile [tile1 tile2]
-  (if (= tile1 0)
-    tile2
-    tile1
-    )
-  )
-
-(defn merge-map [map1 map2]
-  (map merge-tile map1 map2)
+(defn map-geo[geo]
+  (map init-geo-object geo (find-comp (:tile-id geo)))
   )
 
 (defn render-objects-layer [entity]
   (let [tile-map (init-map)]
     (->> entity :attrs :geo-objects
-      #(map init-geo-object % (find-comp %))
+      map-geo
       (reduce merge-map (init-map))
       )
     )
