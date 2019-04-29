@@ -32,6 +32,10 @@
     )
   )
 
+(defn find-comp [comp-tag]
+  ;todo
+  )
+
 (defn render-background-layer [entity]
   (let [
     legend (-> entity :attrs :legend map-invert)
@@ -47,8 +51,53 @@
     )
   )
 
+(def map-size 17)
+
+(defn init-map []
+  (repeat (* map-size map-size) 0)
+  )
+
+;first parameter is geo-object
+(defn init-geo-object [geo comp]
+  (let [
+    tiles (:tiles geo)
+    empty-map (init-map)
+    ]
+    (reduce merge-map empty-map
+      (for [
+        i (range (:w geo))
+        j (range (:h geo))
+        ]
+        (let [
+          x (+ i (:x geo))
+          y (+ j (:y geo))
+          c (+ x (* y map-size))
+          ]
+          (assoc empty-map c (-> tiles (get j) (get i)))
+          )
+        )
+      )
+    )
+  )
+
+(defn merge-tile [tile1 tile2]
+  (if (= tile1 0)
+    tile2
+    tile1
+    )
+  )
+
+(defn merge-map [map1 map2]
+  (map merge-tile map1 map2)
+  )
+
 (defn render-objects-layer [entity]
-  (-> entity :attrs :legend)
+  (let [tile-map (init-map)]
+    (->> entity :attrs :geo-objects
+      #(map init-geo-object % (find-comp %))
+      (reduce merge-map (init-map))
+      )
+    )
   )
 
 (defn convert-room-map-entity [entity]{
