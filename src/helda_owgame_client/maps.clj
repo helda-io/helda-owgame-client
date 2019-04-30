@@ -73,7 +73,7 @@
 ;first parameter is geo-object
 (defn init-geo-object [geo comp]
   (let [
-    tiles (:tiles geo)
+    tiles (:tiles comp)
     empty-map (init-map)
     ]
     (reduce merge-map empty-map
@@ -93,8 +93,12 @@
     )
   )
 
-(defn map-geo[geo]
-  (map init-geo-object geo (find-comp (:tile-id geo)))
+(defn map-geo[geo-list]
+  (map
+    init-geo-object
+    geo-list
+    (map #(find-comp (:tile-id %)) geo-list)
+    )
   )
 
 (defn render-objects-layer [entity]
