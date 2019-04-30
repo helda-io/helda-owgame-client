@@ -35,21 +35,8 @@
   )
 
 (defn find-comp [comp-tag]
-  (client/find-entities tiles-world-id ["helda.TileSet"] [comp-tag])
-  )
-
-(defn render-background-layer [entity]
-  (let [
-    legend (-> entity :attrs :legend map-invert)
-    ]
-    (as-> entity v
-      (:attrs v)
-      (:tiles v)
-      (join " " v)
-      (split v #" ")
-      (map #(get legend %) v)
-      (map #(find-tile-code-or-default % :green) v)
-      )
+  (first
+    (client/find-entities tiles-world-id ["helda.TileSet"] [comp-tag])
     )
   )
 
@@ -71,7 +58,7 @@
 ;first parameter is geo-object
 (defn init-geo-object [geo comp]
   (let [
-    tiles (:tiles comp)
+    tiles (-> comp :attrs :tiles)
     empty-map (init-map)
     ]
     (reduce merge-map empty-map
@@ -91,7 +78,7 @@
     )
   )
 
-(defn map-geo[geo-list]
+(defn map-geo [geo-list]
   (map
     init-geo-object
     geo-list
@@ -104,6 +91,21 @@
     (->> entity :attrs :geo-objects
       map-geo
       (reduce merge-map (init-map))
+      )
+    )
+  )
+
+(defn render-background-layer [entity]
+  (let [
+    legend (-> entity :attrs :legend map-invert)
+    ]
+    (as-> entity v
+      (:attrs v)
+      (:tiles v)
+      (join " " v)
+      (split v #" ")
+      (map #(get legend %) v)
+      (map #(find-tile-code-or-default % :green) v)
       )
     )
   )
