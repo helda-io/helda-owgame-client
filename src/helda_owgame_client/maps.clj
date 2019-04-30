@@ -55,9 +55,7 @@
 
 (def map-size 17)
 
-(defn init-map []
-  (repeat (* map-size map-size) 0)
-  )
+(defn init-map [] (vec (repeat (* map-size map-size) 0)))
 
 (defn merge-tile [tile1 tile2]
   (if (= tile1 0)
