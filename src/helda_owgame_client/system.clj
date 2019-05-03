@@ -4,6 +4,6 @@
 
 (defn new-system [] {
   :components {
-    :cache {}
+    :caches {}
   }
   })

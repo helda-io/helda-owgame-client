@@ -13,7 +13,7 @@
   "Retrieves all entities for world."
   {:responses {:default {:schema [hs/TileMap]}}}
   [
-    [:components db]
+    [:components caches]
     [:data
       world :- s/Str
       room :- s/Str

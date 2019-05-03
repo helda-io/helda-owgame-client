@@ -22,6 +22,8 @@
   )
 
 (defn find-tile-code [id]
+  (if-not @tiles-atom (load-tiles tiles-world-id))
+  
   (if id
     (some-> @tiles-atom id :tile-code)
     )
