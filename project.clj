@@ -6,6 +6,14 @@
     [metosin/kekkonen "0.3.2"]
     [environ "1.0.0"]
     ]
-  :profiles {:uberjar {:aot [helda-owgame-client.main]
-                       :main helda-owgame-client.main
-                       :uberjar-name "helda-owgame-client.jar"}})
+
+  :main helda-owgame-client.main
+
+  :profiles {
+    :uberjar {
+      :aot [helda-owgame-client.main]
+      :main helda-owgame-client.main
+      :uberjar-name "helda-owgame-client.jar"
+      }
+    }
+  )

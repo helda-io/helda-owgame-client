@@ -36,6 +36,6 @@
                :data {:info {:title "Kekkonen helda-owgame-client API"
                              :description "created with http://kekkonen.io"}}}
      :core {:handlers {
-       :hooks [#'load-map]
+       :game [#'load-map]
      }
             :context system}}))

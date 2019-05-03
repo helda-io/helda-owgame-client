@@ -1,4 +1,4 @@
-(ns helda.schema
+(ns helda-owgame-client.schema
   (:require
     [schema.core :as s]
     )
@@ -62,7 +62,7 @@
   :abilities [Ability]
   })
 
-(s/defschema Character {
+(s/defschema RpgCharacter {
   :id s/Str
   :name s/Str
   :hp s/Int
@@ -70,4 +70,4 @@
   :level Level
   :equipment Equipment
   :inventory Inventory
-})
+  })
