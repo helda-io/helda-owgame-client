@@ -11,7 +11,7 @@
 
 (defnk ^:query load-map
   "Retrieves all entities for world."
-  {:responses {:default {:schema [hs/TileMap]}}}
+  {:responses {:default {:schema hs/TileMap}}}
   [
     [:data
       world :- s/Str
