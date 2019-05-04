@@ -1,4 +1,4 @@
-(ns helda-owgame-client.maps
+:worldId(ns helda-owgame-client.maps
   (:require
     [clojure.set :refer [map-invert]]
     [clojure.string :refer [join split]]
@@ -14,25 +14,22 @@
   (if-let [entities (client/find-entities world-id ["helda.SingleTile"])]
     (reset! tiles-atom
       (zipmap
-        (map #(-> % :attrs :comp-id keyword) entities)
+        (map #(-> % :attrs :compId keyword) entities)
         (map #(:attrs %) entities)
         )
       )
     )
   )
 
-(defn find-tile-code [id]
+(defn find-tile [id]
   (if-not @tiles-atom (load-tiles tiles-world-id))
-
-  (if id
-    (some-> @tiles-atom id :tile-code)
-    )
+  (if id (id @tiles-atom))
   )
 
-(defn find-tile-code-or-default [id default-tile]
+(defn find-tile-or-default [id default-tile]
   (or
-    (find-tile-code id)
-    (find-tile-code default-tile)
+    (find-tile id)
+    (find-tile default-tile)
     )
   )
 
@@ -46,18 +43,13 @@
 
 (defn init-map []
   (vec (repeat map-size
-    (vec (repeat map-size 0))
+    (vec (repeat map-size nil))
     ))
   )
 
 (def empty-map (init-map))
 
-(defn merge-tile [tile1 tile2]
-  (if (= tile1 0)
-    tile2
-    tile1
-    )
-  )
+(defn merge-tile [tile1 tile2] (or tile1 tile2))
 
 (defn merge-map [map1 map2]
   (map
@@ -68,6 +60,7 @@
 
 ;first parameter is geo-object
 (defn init-geo-object [geo comp]
+  ;todo add comp size validation w vs width and if it can be placed on map
   (let [
     tiles (-> comp :attrs :tiles)
     ]
@@ -116,7 +109,7 @@
         (fn [row]
           (->> (split row #" ")
             (map #(get legend %))
-            (map #(find-tile-code-or-default % :green))
+            (map #(find-tile-or-default % :green))
             )
           )
         )
@@ -125,8 +118,8 @@
   )
 
 (defn convert-room-map-entity [entity]{
-  :room-id (-> entity :attrs :name)
-  :world-id (:world entity)
+  :roomId (-> entity :attrs :name)
+  :worldId (:world entity)
   :layers [
     (render-background-layer entity)
     (render-objects-layer entity)
