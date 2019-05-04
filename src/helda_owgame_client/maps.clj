@@ -44,7 +44,13 @@
 
 (def map-size 17)
 
-(defn init-map [] (vec (repeat (* map-size map-size) 0)))
+(defn init-map []
+  (vec (repeat map-size
+    (vec (repeat map-size 0))
+    ))
+  )
+
+(def empty-map (init-map))
 
 (defn merge-tile [tile1 tile2]
   (if (= tile1 0)
@@ -54,26 +60,25 @@
   )
 
 (defn merge-map [map1 map2]
-  (map merge-tile map1 map2)
+  (map
+    #(map merge-tile %1 %2)
+    map1 map2
+    )
   )
 
 ;first parameter is geo-object
 (defn init-geo-object [geo comp]
   (let [
     tiles (-> comp :attrs :tiles)
-    empty-map (init-map)
     ]
     (reduce merge-map empty-map
       (for [
         i (range (:w geo))
         j (range (:h geo))
         ]
-        (let [
-          x (+ i (:x geo))
-          y (+ j (:y geo))
-          c (+ x (* y map-size))
-          ]
-          (assoc empty-map c (-> tiles (get j) (get i)))
+        (assoc-in empty-map
+          [(+ j (:y geo)) (+ i (:x geo))]
+          (-> tiles (get j) (get i))
           )
         )
       )
@@ -95,7 +100,7 @@
   (let [tile-map (init-map)]
     (->> entity :attrs :geo-objects
       map-geo
-      (reduce merge-map (init-map))
+      (reduce merge-map empty-map)
       )
     )
   )
@@ -104,13 +109,17 @@
   (let [
     legend (-> entity :attrs :legend map-invert)
     ]
-    (as-> entity v
-      (:attrs v)
-      (:tiles v)
-      (join " " v)
-      (split v #" ")
-      (map #(get legend %) v)
-      (map #(find-tile-code-or-default % :green) v)
+    (->> entity
+      :attrs
+      :tiles
+      (map
+        (fn [row]
+          (->> (split row #" ")
+            (map #(get legend %))
+            (map #(find-tile-code-or-default % :green))
+            )
+          )
+        )
       )
     )
   )

@@ -9,7 +9,7 @@
   :name s/Str
   :width s/Int
   :height s/Int
-  :data [s/Int]
+  :data [[{:tileSetId s/Str :x s/Int :y s/Int}]]
   })
 
 (s/defschema TileMap {
