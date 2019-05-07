@@ -6,20 +6,12 @@
 
 (s/defschema Tile {:fileId s/Str :x s/Int :y s/Int})
 
-(s/defschema TileMapLayer {
-  :id s/Int
-  :name s/Str
-  :width s/Int
-  :height s/Int
-  :data [[Tile]]
-  })
-
 (s/defschema TileMap {
   :roomId s/Str
   :worldId s/Str
   (s/optional-key :description) s/Str
   :tilesets [s/Str]
-  :layers [TileMapLayer]
+  :layers [[Tile]]
   })
 
 (s/defschema Location {
