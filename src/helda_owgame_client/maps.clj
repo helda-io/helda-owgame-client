@@ -1,4 +1,4 @@
-:worldId(ns helda-owgame-client.maps
+(ns helda-owgame-client.maps
   (:require
     [clojure.set :refer [map-invert]]
     [clojure.string :refer [join split]]
