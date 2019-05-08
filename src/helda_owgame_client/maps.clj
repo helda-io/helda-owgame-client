@@ -89,11 +89,19 @@
     )
   )
 
+(defn replace-nulls [rows]
+  (map
+    #(map (fn [tile] (or tile {:fileId :empty})) %)
+    rows
+    )
+  )
+
 (defn render-objects-layer [entity]
   (let [tile-map (init-map)]
     (->> entity :attrs :geo-objects
       map-geo
       (reduce merge-map empty-map)
+      replace-nulls
       )
     )
   )
