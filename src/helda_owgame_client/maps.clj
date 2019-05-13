@@ -7,17 +7,23 @@
   )
 
 (def tiles-atom (atom nil))
+(def foreground-tiles-atom (atom nil))
 
 (def tiles-world-id "owgame1")
 
+(defn fill-dict [entities]
+  (zipmap
+    (map #(-> % :attrs :compId keyword) entities)
+    (map #(:attrs %) entities)
+    )
+  )
+
 (defn load-tiles[world-id]
   (if-let [entities (client/find-entities world-id ["helda.SingleTile"])]
-    (reset! tiles-atom
-      (zipmap
-        (map #(-> % :attrs :compId keyword) entities)
-        (map #(:attrs %) entities)
-        )
-      )
+    (reset! tiles-atom (fill-dict entities))
+    )
+  (if-let [entities (client/find-entities world-id ["helda.ForegroundTile"])]
+    (reset! foreground-tiles-atom (fill-dict entities))
     )
   )
 
