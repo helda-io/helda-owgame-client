@@ -112,18 +112,20 @@
     )
   )
 
-(defn render-background-layer [entity]
+(defn render-background-layer [map-entity]
   (let [
-    legend (-> entity :attrs :legend map-invert)
+    legend (-> map-entity :attrs :legend map-invert)
+    backgrounds (-> map-entity :attrs :backgrounds)
     ]
-    (->> entity
+    (->> map-entity
       :attrs
       :tiles
       (map
         (fn [row]
           (->> (split row #" ")
-            (map #(get legend %))
-            (map #(find-tile-or-default % :green))
+            (map #(legend %))
+            (map #(find-tile-or-default %
+              (or (-> % backgrounds keyword) :green)))
             )
           )
         )
