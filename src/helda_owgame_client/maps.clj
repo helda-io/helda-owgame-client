@@ -102,13 +102,29 @@
     )
   )
 
-(defn render-objects-layer [entity]
-  (let [tile-map (init-map)]
-    (->> entity :attrs :geo-objects
-      map-geo
-      (reduce merge-map empty-map)
-      replace-nulls
+(defn render-foreground-tiles [map-entity]
+  (let [
+    legend (-> map-entity :attrs :legend map-invert)
+    ]
+    (->> map-entity :attrs :tiles
+      (map
+        (fn [row]
+          (->> (split row #" ")
+            (map #(legend %))
+            (map #(@foreground-tiles-atom %))
+            )
+          )
+        )
       )
+    )
+  )
+
+(defn render-objects-layer [entity]
+  (->> entity :attrs :geo-objects
+    map-geo
+    (into (render-foreground-tiles entity))
+    (reduce merge-map empty-map)
+    replace-nulls
     )
   )
 
@@ -117,9 +133,7 @@
     legend (-> map-entity :attrs :legend map-invert)
     backgrounds (-> map-entity :attrs :backgrounds)
     ]
-    (->> map-entity
-      :attrs
-      :tiles
+    (->> map-entity :attrs :tiles
       (map
         (fn [row]
           (->> (split row #" ")
