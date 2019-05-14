@@ -76,7 +76,7 @@
         j (range (:h geo))
         ]
         (assoc-in empty-map
-          [(+ j (:y geo)) (+ i (:x geo))]
+          [(+ j -1 (:y geo)) (+ i -1 (:x geo))]
           (-> tiles (get j) (get i))
           )
         )
