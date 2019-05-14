@@ -122,7 +122,7 @@
 (defn render-objects-layer [entity]
   (->> entity :attrs :geo-objects
     map-geo
-    (into (render-foreground-tiles entity))
+    (cons (render-foreground-tiles entity))
     (reduce merge-map empty-map)
     replace-nulls
     )
