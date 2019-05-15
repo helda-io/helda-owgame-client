@@ -83,8 +83,8 @@
 (defn lookup-tiles [geo comp]
   (cond
     (:tiles geo)
-      (map
-        #(map (fn [tile] (get-in comp [:attrs (keyword tile)])) %)
+      (mapv
+        #(mapv (fn [tile] (get-in comp [:attrs (keyword tile)])) %)
         (:tiles geo)
         )
     :else (-> comp :attrs :tiles)
