@@ -39,9 +39,24 @@
     )
   )
 
-(defn find-comp [comp-tag]
+(defn find-simple-comp [comp-tag]
   (first
     (client/find-entities tiles-world-id ["helda.TileSet"] [comp-tag])
+    )
+  )
+
+(defn find-scalable-comp [comp-tag]
+  (first
+    (client/find-entities tiles-world-id ["helda.ScalableTileSet"] [comp-tag])
+    )
+  )
+
+(defn find-comp [geo-object]
+  (let [tile-id (:tile-id geo-object)]
+    (if (:tiles geo-object)
+      (find-scalable-comp tile-id)
+      (find-simple-comp tile-id)
+      )
     )
   )
 
@@ -90,7 +105,7 @@
     geo-list
     (filter
       identity
-      (map #(find-comp (:tile-id %)) geo-list)
+      (map find-comp geo-list)
       )
     )
   )
