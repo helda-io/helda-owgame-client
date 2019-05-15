@@ -88,6 +88,7 @@
         (:tiles geo)
         )
     :else (-> comp :attrs :tiles)
+    )
   )
 
 ;first parameter is geo-object
