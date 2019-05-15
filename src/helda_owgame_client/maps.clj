@@ -79,13 +79,24 @@
     )
   )
 
+;returns [[tile]]
+(defn lookup-tiles [geo comp]
+  (cond
+    (:tiles geo)
+      (map
+        #(map (fn [tile] (get-in comp [:attrs (keyword tile)])) %)
+        (:tiles geo)
+        )
+    :else (-> comp :attrs :tiles)
+  )
+
 ;first parameter is geo-object
 (defn init-geo-object [geo comp]
   ;todo add comp size validation w vs width and if it can be placed on map
-  (let [
-    tiles (-> comp :attrs :tiles)
-    ]
-    (reduce merge-map empty-map
+  (reduce merge-map empty-map
+    (let [
+      tiles (lookup-tiles geo comp)
+      ]
       (for [
         i (range (:w geo))
         j (range (:h geo))
