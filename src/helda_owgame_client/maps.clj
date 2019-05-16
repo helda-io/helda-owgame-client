@@ -6,6 +6,8 @@
     )
   )
 
+;todo implement validation  
+
 (def tiles-atom (atom nil))
 (def foreground-tiles-atom (atom nil))
 
