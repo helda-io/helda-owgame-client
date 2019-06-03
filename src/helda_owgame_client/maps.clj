@@ -6,7 +6,7 @@
     )
   )
 
-;todo implement validation  
+;todo implement validation
 
 (def tiles-atom (atom nil))
 (def foreground-tiles-atom (atom nil))
@@ -124,27 +124,37 @@
     )
   )
 
-(defn replace-nulls [rows]
-  (map
-    #(map (fn [tile] (or tile {:fileId :empty})) %)
-    rows
+(defn lookup-legend [legend-id]
+  (->
+    (client/find-entities tiles-world-id ["helda.MapLegend"] [legend-id])
+    first
+    )
+  )
+
+(defn load-legend [map-entity]
+  (-> map-entity
+    :attrs :legend-id lookup-legend
+    :attrs :legend map-invert
     )
   )
 
 (defn render-foreground-tiles [map-entity]
-  (let [
-    legend (-> map-entity :attrs :legend map-invert)
-    ]
-    (->> map-entity :attrs :tiles
-      (map
-        (fn [row]
-          (->> (split row #" ")
-            (map #(legend %))
-            (map #(@foreground-tiles-atom %))
-            )
+  (->> map-entity :attrs :tiles
+    (map
+      (fn [row]
+        (->> (split row #" ")
+          (map #(get (load-legend map-entity) %))
+          (map #(@foreground-tiles-atom %))
           )
         )
       )
+    )
+  )
+
+(defn replace-nulls [rows]
+  (map
+    #(map (fn [tile] (or tile {:fileId :empty})) %)
+    rows
     )
   )
 
@@ -159,7 +169,7 @@
 
 (defn render-background-layer [map-entity]
   (let [
-    legend (-> map-entity :attrs :legend map-invert)
+    legend (load-legend map-entity)
     backgrounds (-> map-entity :attrs :backgrounds)
     ]
     (->> map-entity :attrs :tiles
